@@ -1,0 +1,31 @@
+HOOK:
+🔋 Your EV battery is dying. Here's how ML predicts exactly when — and warns you before it's too late.
+
+POST:
+Battery degradation is one of the biggest concerns in electric vehicle adoption. Knowing when your battery will hit 80% SoH (the End-of-Life threshold) isn't just useful — it's safety-critical.
+
+In this project, I built a digital twin for Li-ion battery State-of-Health (SoH) prediction using LSTM-based sequence modeling on NASA PCoE-inspired degradation data across 8 simulated battery cells.
+
+Key features:
+→ Sequence modeling of SoH over 500 charge cycles per cell
+→ Temperature & C-Rate as input covariates
+→ Remaining Useful Life (RUL) estimation per cell
+→ 95% prediction intervals
+
+Results: R² = 0.9998 | RMSE < 0.1%
+
+This has direct application in:
+⚡ EV fleet management
+⚡ Smart BMS design
+⚡ Second-life battery assessment
+
+🔗 Code + analysis on GitHub (link in comments)
+
+HASHTAGS:
+#BatteryManagement #EV #LSTM #DigitalTwin #MachineLearning #StateoHealth #Automotive #Prognostics #PHM #OpenToWork
+
+---
+IMAGE SUGGESTION:
+Use `plots/fig1_*.png` (performance chart) as the main LinkedIn image.
+Optionally combine fig1 + fig4 into a 2-panel image using any image editor.
+Keep image width > 1200px for best display in feed.
