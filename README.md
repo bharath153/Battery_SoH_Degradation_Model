@@ -2,9 +2,6 @@
 
 > Double-exponential baseline for synthetic Li-ion capacity-fade trajectories
 
-> [!NOTE]
-> The repository name is retained for continuity, but the current implementation is **not an LSTM**. The code fits a double-exponential degradation model using `scipy.optimize.curve_fit`. This README describes the implementation as it actually exists.
-
 ## Overview
 
 This project explores battery State-of-Health (SoH) estimation on a synthetic ageing dataset inspired by common battery-degradation studies.
@@ -46,8 +43,8 @@ See `metrics.json` for the saved metrics and `plots/` for generated figures.
 ## Run
 
 ```bash
-git clone https://github.com/bharath153/P02_Battery_SoH_LSTM.git
-cd P02_Battery_SoH_LSTM
+git clone https://github.com/bharath153/Battery_SoH_Degradation_Model.git
+cd Battery_SoH_Degradation_Model
 pip install -r requirements.txt
 python src/train_degradation_model.py
 ```
@@ -55,7 +52,7 @@ python src/train_degradation_model.py
 ## Repository Structure
 
 ```text
-P02_Battery_SoH_LSTM/
+Battery_SoH_Degradation_Model/
 ├── src/
 │   └── train_degradation_model.py
 ├── plots/
