@@ -1,8 +1,8 @@
 """
-Battery State-of-Health (SoH) Digital Twin — LSTM
+Battery State-of-Health (SoH) Degradation Model
 ===================================================
-Predicts Li-ion battery capacity fade over charge cycles using
-LSTM-based sequence modeling, mimicking a BMS diagnostic module.
+Models synthetic Li-ion battery capacity fade over charge cycles using
+a fitted double-exponential degradation baseline.
 Author: Bharath Kanaiah Parthiban
 """
 import numpy as np
@@ -41,11 +41,11 @@ for b in range(n_batteries):
     s, t, c = simulate_battery(n_cycles, init_cap=2.0, k_fade=0.0006+b*0.00005, sigma=0.01, seed=b*7)
     all_SoH.append(s); all_T.append(t); all_CR.append(c)
 
-# --- Simple LSTM simulation via analytical decay + noise (without torch/tf) ---
+# --- Analytical degradation fit via double-exponential model ---
 cycle_idx = np.arange(1, n_cycles+1)
 
-# Represent LSTM predictions as fitted double-exponential (real-world proxy)
-def lstm_fit(SoH):
+# Fit a compact double-exponential degradation baseline
+def degradation_fit(SoH):
     from scipy.optimize import curve_fit
     def model(x, a, b, c): return a * np.exp(-b*x) + c
     try:
@@ -54,7 +54,7 @@ def lstm_fit(SoH):
     except:
         return SoH * 0.999
 
-predictions = [lstm_fit(s) for s in all_SoH]
+predictions = [degradation_fit(s) for s in all_SoH]
 
 # Metrics on last battery (test)
 y_test = all_SoH[-1]
@@ -72,7 +72,7 @@ cmap = plt.cm.get_cmap('tab10', n_batteries)
 for i in range(n_batteries-1):
     ax.plot(cycle_idx, all_SoH[i], lw=1.2, alpha=0.6, color=cmap(i), label=f'Cell {i+1}')
 ax.plot(cycle_idx, all_SoH[-1], lw=2.2, color='black', label='Test Cell (Cell 8)')
-ax.plot(cycle_idx, predictions[-1], lw=2, ls='--', color='#E91E63', label='LSTM Prediction')
+ax.plot(cycle_idx, predictions[-1], lw=2, ls='--', color='#E91E63', label='Double-Exponential Fit')
 ax.axhline(80, color='red', ls=':', lw=1.5, label='EoL threshold (80%)')
 ax.set_xlabel('Charge Cycle', fontsize=11); ax.set_ylabel('State of Health (%)', fontsize=11)
 ax.set_title('Battery SoH Degradation — LSTM Digital Twin', fontsize=13, fontweight='bold')
@@ -83,10 +83,10 @@ plt.close(); print("Saved fig1")
 
 # Fig 2 — Predicted vs Actual + Error band
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-fig.suptitle('LSTM SoH Predictor — Model Performance', fontsize=14, fontweight='bold')
+fig.suptitle('Battery SoH Degradation Fit — Model Performance', fontsize=14, fontweight='bold')
 ax = axes[0]
 ax.plot(cycle_idx, y_test, color='#1976D2', lw=1.5, label='Actual SoH')
-ax.plot(cycle_idx, y_pred, color='#FF5722', lw=1.5, ls='--', label='LSTM Prediction')
+ax.plot(cycle_idx, y_pred, color='#FF5722', lw=1.5, ls='--', label='Double-Exponential Fit')
 ax.fill_between(cycle_idx, y_pred-1.5, y_pred+1.5, alpha=0.15, color='#FF5722', label='±1.5% CI')
 ax.set_xlabel('Cycle', fontsize=11); ax.set_ylabel('SoH (%)', fontsize=11)
 ax.set_title(f'SoH Prediction  |  R² = {r2:.4f}', fontsize=11); ax.legend()
@@ -116,7 +116,7 @@ for pred in predictions:
 fig, ax = plt.subplots(figsize=(8, 5))
 x_pos = np.arange(1, n_batteries+1)
 ax.bar(x_pos - 0.2, rul_actual, 0.35, label='Actual RUL', color='#1976D2', alpha=0.85)
-ax.bar(x_pos + 0.2, rul_pred, 0.35, label='LSTM RUL Estimate', color='#FF5722', alpha=0.85)
+ax.bar(x_pos + 0.2, rul_pred, 0.35, label='Model RUL Estimate', color='#FF5722', alpha=0.85)
 ax.set_xlabel('Battery Cell', fontsize=11); ax.set_ylabel('Remaining Useful Life (cycles)', fontsize=11)
 ax.set_title('Remaining Useful Life Estimation per Cell', fontsize=13, fontweight='bold')
 ax.set_xticks(x_pos); ax.set_xticklabels([f'Cell {i}' for i in x_pos])
