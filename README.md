@@ -49,7 +49,7 @@ See `metrics.json` for the saved metrics and `plots/` for generated figures.
 git clone https://github.com/bharath153/P02_Battery_SoH_LSTM.git
 cd P02_Battery_SoH_LSTM
 pip install -r requirements.txt
-python src/train_lstm.py
+python src/train_degradation_model.py
 ```
 
 ## Repository Structure
@@ -57,7 +57,7 @@ python src/train_lstm.py
 ```text
 P02_Battery_SoH_LSTM/
 ├── src/
-│   └── train_lstm.py
+│   └── train_degradation_model.py
 ├── plots/
 ├── docs/
 ├── metrics.json
